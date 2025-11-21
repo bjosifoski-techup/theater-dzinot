@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { Venue } from '../../types/database';
-import { Plus, Edit, Loader } from 'lucide-react';
+import { Plus, Edit, Loader, Grid } from 'lucide-react';
+import { SeatManagement } from './SeatManagement';
 
 export function VenueManagement() {
   const [venues, setVenues] = useState<Venue[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingVenue, setEditingVenue] = useState<Venue | null>(null);
+  const [managingSeatsVenue, setManagingSeatsVenue] = useState<Venue | null>(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -175,16 +177,34 @@ export function VenueManagement() {
                   </span>
                 </div>
               </div>
-              <button
-                onClick={() => handleEdit(venue)}
-                className="text-blue-600 hover:text-blue-800"
-              >
-                <Edit className="w-5 h-5" />
-              </button>
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => setManagingSeatsVenue(venue)}
+                  className="flex items-center space-x-1 px-3 py-2 bg-slate-600 text-white rounded-md hover:bg-slate-700 transition-colors"
+                  title="Manage Seats"
+                >
+                  <Grid className="w-4 h-4" />
+                  <span className="text-sm">Manage Seats</span>
+                </button>
+                <button
+                  onClick={() => handleEdit(venue)}
+                  className="text-blue-600 hover:text-blue-800 p-2"
+                >
+                  <Edit className="w-5 h-5" />
+                </button>
+              </div>
             </div>
           </div>
         ))}
       </div>
+
+      {managingSeatsVenue && (
+        <SeatManagement
+          venueId={managingSeatsVenue.id}
+          venueName={managingSeatsVenue.name}
+          onClose={() => setManagingSeatsVenue(null)}
+        />
+      )}
     </div>
   );
 }
